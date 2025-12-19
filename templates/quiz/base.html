@@ -1,0 +1,225 @@
+<!-- templates/quiz/base.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Quiz Application - ESB{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --esb-red: #DC143C;
+            --esb-dark-red: #B22222;
+            --esb-light-red: #FF6B6B;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+        }
+        
+        .navbar-esb {
+            background: linear-gradient(135deg, var(--esb-red) 0%, var(--esb-dark-red) 100%);
+            box-shadow: 0 2px 10px rgba(220, 20, 60, 0.3);
+        }
+        
+        .esb-logo {
+            height: 50px;
+            width: auto;
+            margin-right: 15px;
+            filter: brightness(0) invert(1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary, .bg-primary {
+            background-color: var(--esb-red) !important;
+            border-color: var(--esb-red) !important;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--esb-dark-red) !important;
+            border-color: var(--esb-dark-red) !important;
+        }
+        
+        .text-primary {
+            color: var(--esb-red) !important;
+        }
+        
+        .border-primary {
+            border-color: var(--esb-red) !important;
+        }
+        
+        .alert-primary {
+            background-color: rgba(220, 20, 60, 0.1);
+            border-color: var(--esb-red);
+            color: var(--esb-dark-red);
+        }
+        
+        .badge.bg-primary {
+            background-color: var(--esb-red) !important;
+        }
+        
+        .progress-bar {
+            background-color: var(--esb-red) !important;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--esb-red) 0%, var(--esb-dark-red) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .card-header.bg-primary {
+            background: linear-gradient(135deg, var(--esb-red) 0%, var(--esb-dark-red) 100%) !important;
+        }
+        
+        .list-group-item:hover {
+            background-color: rgba(220, 20, 60, 0.05);
+        }
+        
+        .jumbotron {
+            border-left: 4px solid var(--esb-red);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-esb">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                {% load static %}
+<img src="{% static 'images/logo_esb.svg' %}" alt="Logo ESB" class="esb-logo">
+                QuizApp ESB
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="bi bi-house"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'team' %}">
+                            <i class="bi bi-people"></i> Notre Équipe
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'create_quiz' %}">
+                                <i class="bi bi-plus-circle"></i> Créer Quiz
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'my_quizzes' %}">
+                                <i class="bi bi-folder"></i> Mes Quiz
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'my_results' %}">
+                                <i class="bi bi-trophy"></i> Mes Résultats
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link btn btn-link text-white" style="border: none; background: none; cursor: pointer;">
+                                    <i class="bi bi-box-arrow-right"></i> Déconnexion
+                                </button>
+                            </form>
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-link text-white">
+                                <i class="bi bi-person-circle"></i> {{ user.username }}
+                            </span>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="bi bi-box-arrow-in-right"></i> Connexion
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">
+                                <i class="bi bi-person-plus"></i> Inscription
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container mt-4">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <h5><i class="bi bi-mortarboard-fill"></i> École Supérieure de Business</h5>
+                    <p class="mb-1">Application de Quiz en Ligne</p>
+                    <p class="mb-0"><small>© 2024 ESB - Tous droits réservés</small></p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <h6>Développé par :</h6>
+                    <p class="mb-1">
+                        <i class="bi bi-person-fill"></i> <strong>Aws Ourari</strong>
+                    </p>
+                    <p class="mb-1">
+                        <i class="bi bi-person-fill"></i> <strong>Najla Nairi</strong>
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-person-fill"></i> <strong>Ines Jaziri</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

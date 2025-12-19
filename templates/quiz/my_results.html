@@ -1,0 +1,61 @@
+<!-- templates/quiz/my_results.html -->
+{% extends 'quiz/base.html' %}
+
+{% block title %}Mes Résultats{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">
+    <i class="bi bi-trophy"></i> Mes Résultats
+</h2>
+
+{% if attempts %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th><i class="bi bi-journal-text"></i> Quiz</th>
+                    <th><i class="bi bi-star"></i> Score</th>
+                    <th><i class="bi bi-percent"></i> Pourcentage</th>
+                    <th><i class="bi bi-calendar"></i> Date</th>
+                    <th><i class="bi bi-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for attempt in attempts %}
+                    <tr>
+                        <td>
+                            <strong>{{ attempt.quiz.title }}</strong>
+                            <br>
+                            <small class="text-muted">par {{ attempt.quiz.created_by.username }}</small>
+                        </td>
+                        <td>
+                            <strong>{{ attempt.score }}/{{ attempt.quiz.get_max_score }}</strong>
+                        </td>
+                        <td>
+                            {% with percentage=attempt.get_percentage %}
+                                <span class="badge {% if percentage >= 80 %}bg-success{% elif percentage >= 60 %}bg-info{% else %}bg-warning{% endif %}">
+                                    {{ percentage }}%
+                                </span>
+                            {% endwith %}
+                        </td>
+                        <td>{{ attempt.completed_at|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'quiz_result' attempt.id %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i> Voir Détails
+                            </a>
+                            <a href="{% url 'quiz_detail' attempt.quiz.pk %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-arrow-repeat"></i> Refaire
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Vous n'avez pas encore participé à des quiz. 
+        <a href="{% url 'home' %}" class="alert-link">Explorez les quiz disponibles!</a>
+    </div>
+{% endif %}
+{% endblock %}

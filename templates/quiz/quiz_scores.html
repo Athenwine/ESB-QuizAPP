@@ -1,0 +1,92 @@
+<!-- templates/quiz/quiz_scores.html -->
+{% extends 'quiz/base.html' %}
+
+{% block title %}Classement - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow">
+            <div class="card-header bg-warning">
+                <h3 class="mb-0">
+                    <i class="bi bi-trophy-fill"></i> Classement - {{ quiz.title }}
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <a href="{% url 'quiz_detail' quiz.pk %}" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-left"></i> Retour au Quiz
+                    </a>
+                </div>
+
+                {% if scores %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-warning">
+                                <tr>
+                                    <th width="80"><i class="bi bi-hash"></i> Rang</th>
+                                    <th><i class="bi bi-person"></i> Utilisateur</th>
+                                    <th><i class="bi bi-star"></i> Score</th>
+                                    <th><i class="bi bi-percent"></i> Pourcentage</th>
+                                    <th><i class="bi bi-calendar"></i> Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for score in scores %}
+                                    <tr {% if score.user == user %}class="table-info"{% endif %}>
+                                        <td>
+                                            {% if forloop.counter == 1 %}
+                                                <span class="badge bg-warning text-dark fs-5">
+                                                    <i class="bi bi-trophy-fill"></i> 1
+                                                </span>
+                                            {% elif forloop.counter == 2 %}
+                                                <span class="badge bg-secondary fs-5">
+                                                    <i class="bi bi-trophy"></i> 2
+                                                </span>
+                                            {% elif forloop.counter == 3 %}
+                                                <span class="badge bg-danger fs-5">
+                                                    <i class="bi bi-trophy"></i> 3
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-light text-dark">{{ forloop.counter }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <strong>{{ score.user.username }}</strong>
+                                            {% if score.user == user %}
+                                                <span class="badge bg-info">Vous</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <strong>{{ score.score }}/{{ quiz.get_max_score }}</strong>
+                                        </td>
+                                        <td>
+                                            {% with percentage=score.get_percentage %}
+                                                <div class="progress" style="height: 25px;">
+                                                    <div class="progress-bar {% if percentage >= 80 %}bg-success{% elif percentage >= 60 %}bg-info{% else %}bg-warning{% endif %}" 
+                                                         role="progressbar" 
+                                                         style="width: {{ percentage }}%"
+                                                         aria-valuenow="{{ percentage }}" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100">
+                                                        {{ percentage }}%
+                                                    </div>
+                                                </div>
+                                            {% endwith %}
+                                        </td>
+                                        <td>{{ score.completed_at|date:"d/m/Y H:i" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Aucun score enregistré pour ce quiz. Soyez le premier à le compléter!
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

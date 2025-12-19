@@ -1,0 +1,118 @@
+<!-- templates/quiz/quiz_detail.html -->
+{% extends 'quiz/base.html' %}
+
+{% block title %}{{ quiz.title }} - Quiz Application{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">
+                    <i class="bi bi-journal-text"></i> {{ quiz.title }}
+                </h2>
+            </div>
+            <div class="card-body">
+                <p class="lead">{{ quiz.description }}</p>
+                
+                <hr>
+                
+                <div class="row text-center">
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded">
+                            <i class="bi bi-question-circle fs-3 text-primary"></i>
+                            <p class="mb-0 mt-2"><strong>{{ questions_count }}</strong></p>
+                            <small class="text-muted">Questions</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded">
+                            <i class="bi bi-star fs-3 text-warning"></i>
+                            <p class="mb-0 mt-2"><strong>{{ quiz.get_max_score }}</strong></p>
+                            <small class="text-muted">Points Maximum</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded">
+                            <i class="bi bi-clock fs-3 text-info"></i>
+                            <p class="mb-0 mt-2"><strong>{{ quiz.time_limit|default:"Pas de limite" }}</strong></p>
+                            <small class="text-muted">Minutes</small>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                {% if user.is_authenticated %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'start_quiz' quiz.pk %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-play-circle"></i> Commencer le Quiz
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> 
+                        Vous devez être connecté pour participer à ce quiz.
+                        <a href="{% url 'login' %}" class="alert-link">Se connecter</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer text-muted">
+                <small>
+                    <i class="bi bi-person"></i> Créé par <strong>{{ quiz.created_by.username }}</strong> 
+                    le {{ quiz.created_at|date:"d/m/Y à H:i" }}
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        {% if previous_attempts %}
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history"></i> Vos Précédentes Tentatives
+                    </h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for attempt in previous_attempts|slice:":5" %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Score: {{ attempt.score }}/{{ quiz.get_max_score }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {{ attempt.completed_at|date:"d/m/Y H:i" }}
+                                    </small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-primary rounded-pill">
+                                        {{ attempt.get_percentage }}%
+                                    </span>
+                                    <br>
+                                    <a href="{% url 'quiz_result' attempt.id %}" class="btn btn-sm btn-outline-primary mt-1">
+                                        Voir
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-trophy"></i> Top Scores
+                </h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'quiz_scores' quiz.pk %}" class="btn btn-outline-info w-100">
+                    <i class="bi bi-list-ol"></i> Voir le Classement Complet
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

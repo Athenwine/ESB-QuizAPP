@@ -1,0 +1,57 @@
+<!-- templates/registration/login.html -->
+{% extends 'quiz/base.html' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0 text-center">
+                    <i class="bi bi-box-arrow-in-right"></i> Connexion
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">
+                            <i class="bi bi-person"></i> Nom d'utilisateur
+                        </label>
+                        <input type="text" name="username" class="form-control" id="id_username" required autofocus>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">
+                            <i class="bi bi-lock"></i> Mot de passe
+                        </label>
+                        <input type="password" name="password" class="form-control" id="id_password" required>
+                    </div>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-circle"></i>
+                            Nom d'utilisateur ou mot de passe incorrect.
+                        </div>
+                    {% endif %}
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right"></i> Se Connecter
+                        </button>
+                    </div>
+                </form>
+
+                <hr>
+
+                <p class="text-center mb-0">
+                    Pas encore de compte? 
+                    <a href="{% url 'register' %}">S'inscrire</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

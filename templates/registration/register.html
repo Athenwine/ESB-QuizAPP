@@ -1,0 +1,75 @@
+<!-- templates/registration/register.html -->
+{% extends 'quiz/base.html' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0 text-center">
+                    <i class="bi bi-person-plus"></i> Inscription
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">
+                            <i class="bi bi-person"></i> Nom d'utilisateur *
+                        </label>
+                        <input type="text" name="username" class="form-control" id="id_username" required autofocus>
+                        <small class="text-muted">150 caractères maximum. Lettres, chiffres et @/./+/-/_ uniquement.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">
+                            <i class="bi bi-envelope"></i> Email (optionnel)
+                        </label>
+                        <input type="email" name="email" class="form-control" id="id_email">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label">
+                            <i class="bi bi-lock"></i> Mot de passe *
+                        </label>
+                        <input type="password" name="password1" class="form-control" id="id_password1" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password2" class="form-label">
+                            <i class="bi bi-lock-fill"></i> Confirmer le mot de passe *
+                        </label>
+                        <input type="password" name="password2" class="form-control" id="id_password2" required>
+                    </div>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                    <p class="mb-0"><i class="bi bi-exclamation-circle"></i> {{ error }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-person-plus"></i> S'inscrire
+                        </button>
+                    </div>
+                </form>
+
+                <hr>
+
+                <p class="text-center mb-0">
+                    Déjà un compte? 
+                    <a href="{% url 'login' %}">Se connecter</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

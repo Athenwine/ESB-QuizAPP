@@ -1,0 +1,128 @@
+<!-- templates/quiz/quiz_result.html -->
+{% extends 'quiz/base.html' %}
+
+{% block title %}Résultats - {{ attempt.quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">
+                    <i class="bi bi-trophy"></i> Résultats du Quiz
+                </h3>
+            </div>
+            <div class="card-body text-center">
+                <h2>{{ attempt.quiz.title }}</h2>
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="p-4 bg-light rounded">
+                            <i class="bi bi-star-fill fs-1 text-warning"></i>
+                            <h3 class="mt-2">{{ attempt.score }}/{{ attempt.quiz.get_max_score }}</h3>
+                            <p class="text-muted">Score Total</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 bg-light rounded">
+                            <i class="bi bi-percent fs-1 text-primary"></i>
+                            <h3 class="mt-2">{{ percentage }}%</h3>
+                            <p class="text-muted">Pourcentage</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 bg-light rounded">
+                            {% if percentage >= 80 %}
+                                <i class="bi bi-emoji-smile fs-1 text-success"></i>
+                                <h3 class="mt-2 text-success">Excellent!</h3>
+                            {% elif percentage >= 60 %}
+                                <i class="bi bi-emoji-neutral fs-1 text-info"></i>
+                                <h3 class="mt-2 text-info">Bien!</h3>
+                            {% else %}
+                                <i class="bi bi-emoji-frown fs-1 text-warning"></i>
+                                <h3 class="mt-2 text-warning">À améliorer</h3>
+                            {% endif %}
+                            <p class="text-muted">Appréciation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="{% url 'quiz_detail' attempt.quiz.pk %}" class="btn btn-primary">
+                        <i class="bi bi-arrow-repeat"></i> Recommencer
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house"></i> Retour à l'accueil
+                    </a>
+                    <a href="{% url 'quiz_scores' attempt.quiz.pk %}" class="btn btn-outline-info">
+                        <i class="bi bi-trophy"></i> Voir le classement
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-file-text"></i> Correction Détaillée
+                </h4>
+            </div>
+            <div class="card-body">
+                {% for answer in answers %}
+                    <div class="card mb-3 {% if answer.is_correct %}border-success{% else %}border-danger{% endif %}">
+                        <div class="card-header {% if answer.is_correct %}bg-success bg-opacity-10{% else %}bg-danger bg-opacity-10{% endif %}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Question {{ forloop.counter }}</h5>
+                                {% if answer.is_correct %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Correct
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-x-circle"></i> Incorrect
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="fw-bold">{{ answer.question.question_text }}</p>
+                            
+                            <div class="mt-3">
+                                <p class="mb-2"><strong>Vos réponses:</strong></p>
+                                <ul class="list-unstyled">
+                                    {% for choice in answer.selected_choices.all %}
+                                        <li class="{% if choice.is_correct %}text-success{% else %}text-danger{% endif %}">
+                                            <i class="bi bi-{% if choice.is_correct %}check{% else %}x{% endif %}-circle"></i>
+                                            {{ choice.choice_text }}
+                                        </li>
+                                    {% empty %}
+                                        <li class="text-muted">
+                                            <i class="bi bi-dash-circle"></i> Aucune réponse sélectionnée
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                                {% if not answer.is_correct %}
+                                    <div class="alert alert-info mt-3 mb-0">
+                                        <strong><i class="bi bi-lightbulb"></i> Bonne(s) réponse(s):</strong>
+                                        <ul class="mb-0 mt-2">
+                                            {% for choice in answer.question.choices.all %}
+                                                {% if choice.is_correct %}
+                                                    <li>{{ choice.choice_text }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

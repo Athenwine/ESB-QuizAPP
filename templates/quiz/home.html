@@ -1,0 +1,83 @@
+<!-- templates/quiz/home.html -->
+{% extends 'quiz/base.html' %}
+
+{% block title %}Accueil - Quiz Application{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Bienvenue sur QuizApp!</h1>
+            <p class="lead">Testez vos connaissances avec nos quiz interactifs ou créez vos propres quiz.</p>
+            <hr class="my-4">
+            {% if user.is_authenticated %}
+                <p>Prêt à commencer? Choisissez un quiz ci-dessous ou créez le vôtre!</p>
+                <a class="btn btn-primary btn-lg" href="{% url 'create_quiz' %}" role="button">
+                    <i class="bi bi-plus-circle"></i> Créer un Quiz
+                </a>
+            {% else %}
+                <p>Connectez-vous pour participer aux quiz et suivre vos scores!</p>
+                <a class="btn btn-primary btn-lg me-2" href="{% url 'login' %}" role="button">
+                    <i class="bi bi-box-arrow-in-right"></i> Se Connecter
+                </a>
+                <a class="btn btn-outline-primary btn-lg" href="{% url 'register' %}" role="button">
+                    <i class="bi bi-person-plus"></i> S'inscrire
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<h2 class="mb-4">Quiz Disponibles</h2>
+
+{% if quizzes %}
+    <div class="row">
+        {% for quiz in quizzes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card quiz-card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-journal-text text-primary"></i>
+                            {{ quiz.title }}
+                        </h5>
+                        <p class="card-text text-muted">{{ quiz.description|truncatewords:20 }}</p>
+                        
+                        <div class="d-flex justify-content-between text-muted small mb-3">
+                            <span>
+                                <i class="bi bi-question-circle"></i> 
+                                {{ quiz.questions_count }} question{{ quiz.questions_count|pluralize }}
+                            </span>
+                            <span>
+                                <i class="bi bi-people"></i> 
+                                {{ quiz.attempts_count }} participant{{ quiz.attempts_count|pluralize }}
+                            </span>
+                        </div>
+
+                        {% if quiz.time_limit %}
+                            <p class="text-muted small">
+                                <i class="bi bi-clock"></i> Temps limite: {{ quiz.time_limit }} minutes
+                            </p>
+                        {% endif %}
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'quiz_detail' quiz.pk %}" class="btn btn-primary btn-sm flex-fill">
+                                <i class="bi bi-eye"></i> Voir Détails
+                            </a>
+                            <a href="{% url 'quiz_scores' quiz.pk %}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-trophy"></i> Scores
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        Créé par {{ quiz.created_by.username }} le {{ quiz.created_at|date:"d/m/Y" }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Aucun quiz disponible pour le moment. Soyez le premier à en créer un!
+    </div>
+{% endif %}
+{% endblock %}

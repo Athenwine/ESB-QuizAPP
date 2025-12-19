@@ -1,0 +1,108 @@
+<!-- templates/quiz/take_quiz.html -->
+{% extends 'quiz/base.html' %}
+
+{% block title %}{{ attempt.quiz.title }} - Passer le Quiz{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="bi bi-pencil-square"></i> {{ attempt.quiz.title }}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if attempt.quiz.time_limit %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-clock"></i> 
+                        <strong>Temps limite:</strong> {{ attempt.quiz.time_limit }} minutes
+                    </div>
+                {% endif %}
+
+                <form method="post" id="quizForm">
+                    {% csrf_token %}
+                    
+                    {% for question in questions %}
+                        <div class="card mb-4 border-start border-primary border-4">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    Question {{ forloop.counter }} 
+                                    <span class="badge bg-secondary">{{ question.points }} point{{ question.points|pluralize }}</span>
+                                </h5>
+                                <p class="card-text fs-5">{{ question.question_text }}</p>
+                                
+                                <div class="mt-3">
+                                    {% if question.question_type == 'single' %}
+                                        {% for choice in question.choices.all %}
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" 
+                                                       name="question_{{ question.id }}" 
+                                                       id="choice_{{ choice.id }}" 
+                                                       value="{{ choice.id }}"
+                                                       required>
+                                                <label class="form-check-label" for="choice_{{ choice.id }}">
+                                                    {{ choice.choice_text }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    
+                                    {% elif question.question_type == 'multiple' %}
+                                        <p class="text-muted small">
+                                            <i class="bi bi-info-circle"></i> Plusieurs réponses possibles
+                                        </p>
+                                        {% for choice in question.choices.all %}
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       name="question_{{ question.id }}" 
+                                                       id="choice_{{ choice.id }}" 
+                                                       value="{{ choice.id }}">
+                                                <label class="form-check-label" for="choice_{{ choice.id }}">
+                                                    {{ choice.choice_text }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    
+                                    {% elif question.question_type == 'true_false' %}
+                                        {% for choice in question.choices.all %}
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" 
+                                                       name="question_{{ question.id }}" 
+                                                       id="choice_{{ choice.id }}" 
+                                                       value="{{ choice.id }}"
+                                                       required>
+                                                <label class="form-check-label" for="choice_{{ choice.id }}">
+                                                    {{ choice.choice_text }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                            <i class="bi bi-check-circle"></i> Soumettre mes Réponses
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('quizForm').addEventListener('submit', function(e) {
+        if (!confirm('Êtes-vous sûr de vouloir soumettre vos réponses? Vous ne pourrez pas les modifier après.')) {
+            e.preventDefault();
+        } else {
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerHTML = '<i class="bi bi-hourglass-split"></i> Envoi en cours...';
+        }
+    });
+</script>
+{% endblock %}
