@@ -143,3 +143,55 @@ python manage.py runserver
 - [ ] Application mobile
 
 ## 📊 Structure du Projet
+quiz_application/
+├── quiz/                  # Application principale
+│   ├── models.py         # Modèles de données
+│   ├── views.py          # Logique métier
+│   ├── urls.py           # Routes
+│   ├── forms.py          # Formulaires
+│   └── admin.py          # Configuration admin
+├── templates/            # Templates HTML
+│   ├── quiz/            # Templates quiz
+│   └── registration/    # Templates auth
+├── static/              # Fichiers statiques
+│   └── images/          # Images et logos
+├── quiz_project/        # Configuration projet
+│   ├── settings.py      # Paramètres Django
+│   └── urls.py          # URLs principales
+├── manage.py            # Script Django
+├── requirements.txt     # Dépendances Python
+└── README.md           # Documentation
+## 🔒 Sécurité
+
+- Protection CSRF sur tous les formulaires
+- Authentification Django intégrée
+- Permissions basées sur les utilisateurs
+- Validation des données côté serveur
+- Protection contre les injections SQL (ORM)
+
+## 📝 Licence
+
+Ce projet est développé à des fins éducatives dans le cadre de notre formation à l'ESB.
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! Pour contribuer :
+
+1. Forkez le projet
+2. Créez une branche (`git checkout -b feature/AmazingFeature`)
+3. Committez vos changements (`git commit -m 'Add AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrez une Pull Request
+
+## 📞 Contact
+
+awsourari123@gmail.com
+---
+
+<div align="center">
+
+**Développé avec ❤️ par l'équipe QuizApp ESB**
+
+[⬆ Retour en haut](#-quizapp-esb---application-de-quiz-en-ligne)
+
+</div>
